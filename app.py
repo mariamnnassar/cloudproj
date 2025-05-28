@@ -25,9 +25,8 @@ input_to_model_map = {
     'Risk Factor': 'V12',
     'Account Age': 'V11',
     'Spending Pattern': 'V4',
-    'Alert Count': 'V3',
-    'V7': 'V7',  
-    'V18': 'V18'
+    'Alert Count': 'V3'
+
 }
 
 @app.route('/')
@@ -53,7 +52,7 @@ def predict():
 
         # Make prediction
         prediction = model.predict(input_array)[0]
-        label = "Fraud" if prediction == -1 else "Not Fraud"  # Isolation Forest يعطي -1 للفشود
+        label = "Fraud" if prediction == 0 else "Not fraud" # Isolation Forest يعطي -1 للفشود
         
         return jsonify({"prediction": label})
 
