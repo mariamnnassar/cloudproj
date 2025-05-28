@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 # Initialize the Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/predict": {"origins": "https://cloudproj-5.onrender.com/"}})
 
 # Load the trained model
 model = joblib.load("model/isolation_forest.joblib")
@@ -47,7 +47,7 @@ def predict():
 
         # Make prediction
         prediction = model.predict(input_array)[0]
-        label = "Fraud" if prediction == -1 else "Legit"
+        label = "Fraud" if prediction == -1 else "Not fraud"
 
         return jsonify({"prediction": label})
 
