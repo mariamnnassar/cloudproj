@@ -1,14 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
 from flask_cors import CORS
+import os
 
-# Initialize the Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/predict": {"origins": "https://cloudproj-5.onrender.com/"}})
+CORS(app)
 
 # Load the trained model
-model = joblib.load("model/isolation_forest.joblib")
+model_path = "model/isolation_forest.joblib"
+print("Loading model from:", os.path.abspath(model_path))
+model = joblib.load(model_path)
 
 # List of features expected by the model (in correct order)
 model_features = ['V17', 'V14', 'V10', 'V16', 'V12', 'V11', 'V4', 'V3', 'V7', 'V18', 'Time_Hours']
@@ -24,15 +26,19 @@ input_to_model_map = {
     'Account Age': 'V11',
     'Spending Pattern': 'V4',
     'Alert Count': 'V3',
-    'V7': 'V7',  # لو حابة تغيري الاسم، غيريه كمان بالفرونت
+    'V7': 'V7',  
     'V18': 'V18'
 }
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        data = request.get_json()
-
+        data = request.get_json()  # تغيير من form إلى JSON
+        
         # Convert input data to the format expected by the model
         model_input = {}
         for user_key, model_key in input_to_model_map.items():
@@ -47,12 +53,12 @@ def predict():
 
         # Make prediction
         prediction = model.predict(input_array)[0]
-        label = "Fraud" if prediction == -1 else "Not fraud"
-
+        label = "Fraud" if prediction == -1 else "Not Fraud"  # Isolation Forest يعطي -1 للفشود
+        
         return jsonify({"prediction": label})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
