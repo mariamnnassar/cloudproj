@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 # Initialize the Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/predict": {"origins": "http://localhost:5500"}})
+CORS(app)
 
 # Load the trained model
 model = joblib.load("model/isolation_forest.joblib")
