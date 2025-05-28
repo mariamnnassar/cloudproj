@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 # Initialize the Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/predict": {"origins": "http://localhost:5500"}})
 
 # Load the trained model
 model = joblib.load("model/isolation_forest.joblib")
@@ -24,6 +24,8 @@ input_to_model_map = {
     'Account Age': 'V11',
     'Spending Pattern': 'V4',
     'Alert Count': 'V3',
+    'V7': 'V7',  # لو حابة تغيري الاسم، غيريه كمان بالفرونت
+    'V18': 'V18'
 }
 
 @app.route("/predict", methods=["POST"])
