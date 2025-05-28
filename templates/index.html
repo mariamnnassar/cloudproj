@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fraud Detection</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-container">
+    <div class="form-card">
+      <h1>💳 Credit Card Fraud Detection</h1>
+      <p class="subtitle">🔍 Fill the transaction details below</p>
+
+      <form id="fraudForm">
+        <div class="input-grid">
+          <input type="number" name="Amount" placeholder="Amount" step="any" required />
+          <input type="number" name="Transaction Time" placeholder="Transaction Time" step="any" required />
+          <input type="number" name="Location Score" placeholder="Location Score" step="any" required />
+          <input type="number" name="Merchant Type" placeholder="Merchant Type" step="any" required />
+          <input type="number" name="Card Usage" placeholder="Card Usage" step="any" required />
+          <input type="number" name="Risk Factor" placeholder="Risk Factor" step="any" required />
+          <input type="number" name="Account Age" placeholder="Account Age" step="any" required />
+          <input type="number" name="Spending Pattern" placeholder="Spending Pattern" step="any" required />
+          <input type="number" name="Alert Count" placeholder="Alert Count" step="any" required />
+        </div>
+
+        <div class="button-group">
+          <button type="submit">🚀 Predict</button>
+          <button type="button" id="resetBtn" class="secondary">🔄 Reset</button>
+        </div>
+      </form>
+
+      <div id="result" class="result-box"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("fraudForm");
+    const resultBox = document.getElementById("result");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      resultBox.textContent = "⏳ Processing transaction...";
+
+      // جمع البيانات من الفورم
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = parseFloat(value);
+      });
+
+      try {
+        // ارسال البيانات للباك اند
+        const response = await fetch("http://127.0.0.1:5000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const json = await response.json();
+
+        if (json.error) {
+          // اذا رجع باك اند خطأ
+          resultBox.textContent = "❌ Error: " + json.error;
+        } else {
+          // عرض النتيجة
+          resultBox.innerHTML = `✍️ Prediction: <strong>${json.prediction}</strong>`;
+        }
+      } catch (error) {
+        resultBox.textContent = "❌ Error: " + error.message;
+      }
+    });
+
+    // زر إعادة تعيين الفورم
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      form.reset();
+      resultBox.textContent = "";
+    });
+  </script>
+</body>
+</html>
