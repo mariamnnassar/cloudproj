@@ -23,9 +23,12 @@ input_to_model_map = {
     'Merchant Type': 'V10',
     'Card Usage': 'V16',
     'Risk Factor': 'V12',
-    'Account Age': 'V11',
+   #'Account Age': 'V11',
     'Spending Pattern': 'V4',
-    'Alert Count': 'V3'
+    'Alert Count': 'V3',
+    'User Score': 'V7',           # NEW FIELD
+   #'Behavior Deviation': 'V18',  # NEW FIELD
+    'Transaction Category': 'V1'
 
 }
 
@@ -40,6 +43,7 @@ def predict():
         
         # Convert input data to the format expected by the model
         model_input = {}
+        print("Received data:", data)
         for user_key, model_key in input_to_model_map.items():
             value = data.get(user_key)
             if value is None:
@@ -52,11 +56,12 @@ def predict():
 
         # Make prediction
         prediction = model.predict(input_array)[0]
-        label = "Fraud" if prediction == 0 else "Not fraud" # Isolation Forest يعطي -1 للفشود
+        label = "Fraud" if prediction == 1 else "Not fraud" # Isolation Forest يعطي -1 للفشود
         
         return jsonify({"prediction": label})
 
     except Exception as e:
+        print("Error occurred:", e)  # سيطبع الخطأ في التيرمنال
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
