@@ -22,10 +22,10 @@
           <input type="number" name="Merchant Type" placeholder="Merchant Type" step="any" required />
           <input type="number" name="Card Usage" placeholder="Card Usage" step="any" required />
           <input type="number" name="Risk Factor" placeholder="Risk Factor" step="any" required />
-    <!--  <input type="number" name="Account Age" placeholder="Account Age" step="any" required />    -->
+     <input type="number" name="Account Age" placeholder="Account Age" step="any" required />    
           <input type="number" name="Spending Pattern" placeholder="Spending Pattern" step="any" required />
           <input type="number" name="Alert Count" placeholder="Alert Count" step="any" required />
-          <input type="number" name="User Score" placeholder="User Score" step="any" required />
+  <!-- <input type="number" name="User Score" placeholder="User Score" step="any" required />  -->
   <!--  <input type="number" name="Behavior Deviation"placeholder=" Behavior Deviation" step="any" required /> -->
 
 
@@ -50,7 +50,6 @@
       e.preventDefault();
       resultBox.textContent = "⏳ Processing transaction...";
 
-      // جمع البيانات من الفورم
       const formData = new FormData(form);
       const data = {};
       formData.forEach((value, key) => {
@@ -58,7 +57,6 @@
       });
 
       try {
-        // ارسال البيانات للباك اند
         const response = await fetch(" http://localhost:5000/predict", {
             method: "POST",
             headers: {
@@ -74,10 +72,8 @@
         const json = await response.json();
 
         if (json.error) {
-          // اذا رجع باك اند خطأ
           resultBox.textContent = "❌ Error: " + json.error;
         } else {
-          // عرض النتيجة
           resultBox.innerHTML = `✍️ Prediction: <strong>${json.prediction}</strong>`;
         }
       } catch (error) {
@@ -85,7 +81,6 @@
       }
     });
 
-    // زر إعادة تعيين الفورم
     document.getElementById("resetBtn").addEventListener("click", () => {
       form.reset();
       resultBox.textContent = "";
