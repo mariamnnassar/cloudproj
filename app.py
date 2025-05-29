@@ -53,7 +53,7 @@ def predict():
 
         # Make prediction
         prediction = model.predict(input_array)[0]
-        label = "Fraud" if prediction == 1 else "Not fraud" 
+        label = "Fraud" if prediction ==-1 else "Not fraud" 
         
         return jsonify({"prediction": label})
 
